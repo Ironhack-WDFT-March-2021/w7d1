@@ -1,70 +1,310 @@
-# Getting Started with Create React App
+## Create React App
+```bash
+$ npx create-react-app <NAME>
+```
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#### Run the App and visit http://localhost:3000
+```bash
+$ npm start
+```
 
-## Available Scripts
+# Components
 
-In the project directory, you can run:
+Components are the main building blocks of react applications. 
 
-### `npm start`
+If you have a To Do List the list itself could be a component and every list item would be a component 
+as well.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The root component is usually named App.js 
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Functional and class components
 
-### `npm test`
+We can have functional and class components. Functional components cannot have state (if we are not usinn hooks) - more on state later. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Let's write a class component called Greeting
 
-### `npm run build`
+```
+// src/index.js
+import React from 'react';
+// import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
+import './style.css';
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+class Greeting extends React.Component {
+    render() {
+        return (
+            <h1>Hello</h1>
+        )
+    }
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+ReactDOM.render(
+    <Greeting />,
+    document.getElementById('root')
+);
+```
 
-### `npm run eject`
+### The same done with a functional component
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+// src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './style.css';
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const Greeting = () => {
+    return <h1>Hello</h1>
+}
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+ReactDOM.render(
+    <Greeting />,
+    document.getElementById('root')
+);
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Now we want to give a name to the compoment that should then be displayed much like the parameter of a function - that is called a prop in react - data that is passed from outside to the component
 
-## Learn More
+### Pops and class components
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+// src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './style.css';
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+class Greeting extends React.Component {
+    render() {
+        console.log(this.props);
+        return (
+            <h1>Hello {this.props.name}!!</h1>
+        )
+    }
+}
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+ReactDOM.render(
+    <Greeting name="Alice" />,
+    document.getElementById('root')
+);
+```
 
-### Analyzing the Bundle Size
+### Now exactly the same but with a functional component
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+// src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './style.css';
 
-### Making a Progressive Web App
+// props is the first argument of the functional component
+const Greeting = (props) => {
+    return <h1>Hello {props.name}</h1>
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+ReactDOM.render(
+    <Greeting name="Alice" />,
+    document.getElementById('root')
+);
 
-### Advanced Configuration
+```
+### We can use the same component multiple times with different props
+### We add the mentioned root component App to our structure and inside there we render two Greeting components
+```
+// src/index.js
+import React, { Fragment } from 'react';
+import ReactDOM from 'react-dom';
+import './style.css';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+class App extends React.Component {
+    render() {
+        return (
+            <Fragment>
+                <Greeting name="Marty" />
+                <Greeting name="Biff" />
+            </Fragment>
+        )
+    }
+}
 
-### Deployment
+const Greeting = (props) => {
+    return <h1>Hello {props.name}</h1>
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+ReactDOM.render(
+    <App />,
+    document.getElementById('root')
+);
+```
 
-### `npm run build` fails to minify
+### Now let's have the components in different files - we want a Profile component that has a picture and some details - we want three components, a Profile, Picture and Detail component. Plus our App root component in a separate file
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+$ touch src/App.js
+$ touch src/Profile.js
+$ touch src/Picture.js
+$ touch src/Detail.js
+```
+
+### First add the App.js
+```
+// src/App.js
+
+import React from 'react'
+
+const App = () => {
+    return (
+        <div>
+            <h1>Hello</h1>
+        </div>
+    )
+}
+
+export default App;
+```
+
+### And import and render it in index.js
+```
+// src/index.js
+import React, { Fragment } from 'react';
+import ReactDOM from 'react-dom';
+import './style.css';
+import App from './App';
+
+ReactDOM.render(
+    <App />,
+    document.getElementById('root')
+);
+```
+
+### Now add the Profile Component - the App component renders the profile component
+```
+// src/Profile.js
+
+import React from 'react'
+
+const Profile = () => {
+    return (
+        <div>
+            <h1>Profile</h1>
+        </div>
+    )
+}
+
+export default Profile;
+```
+
+### And in the App component:
+```
+// src/App.js
+import React from 'react'
+import Profile from './Profile';
+
+const App = () => {
+    return (
+        <Profile />
+    )
+}
+
+export default App;
+```
+
+### From the App component we want to pass a user object to the Profile
+
+### Add user object to App.js
+
+```
+// src/App.js
+
+import React from 'react'
+import Profile from './Profile';
+
+const App = () => {
+    const user = {
+        name: 'Jim',
+        email: 'jim@gmail.com',
+        picture: 'https://bit.ly/2zVs57p'
+    }
+    return (
+        <Profile data={user} />
+    )
+}
+
+export default App;
+```
+
+```
+// src/Profile.js
+
+import React from 'react'
+
+const Profile = (props) => {
+    console.log(props.data.name);
+    return (
+        <div>
+            <h1>Profile</h1>
+        </div>
+    )
+}
+
+export default Profile;
+```
+
+### Now the data should be passed to Detail and Picture that will be rendered in the Profile component
+
+```
+// src/Profile.js
+
+import React from 'react'
+import Picture from './Picture';
+import Detail from './Detail';
+
+
+const Profile = (props) => {
+    console.log(props.data.name);
+    return (
+        <div>
+            <h1>Profile</h1>
+            <Picture imageUrl={props.data.picture} />
+            <Detail name={props.data.name} email={props.data.email} />
+        </div>
+    )
+}
+
+export default Profile;
+```
+
+```
+// src/Detail.js
+
+import React from 'react'
+
+const Detail = (props) => {
+    return (
+        <div>
+            <p>
+                Name: {props.name}
+            </p>
+            <p>
+                Email: {props.email}
+            </p>
+        </div>
+    )
+}
+
+export default Detail;
+```
+
+```
+// src/Picture.js
+
+import React from 'react'
+
+const Picture = (props) => {
+    return (
+        <img src={props.imageUrl} style={{ width: '200px' }} />
+    )
+}
+export default Picture;
+
+```
